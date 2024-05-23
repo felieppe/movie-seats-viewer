@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+.body {
+    margin: 0;
+    padding: 0;
+}
+
+.main-container {
+    height: 100vh;
+    background-color: #333;
+    font-family: "Poppins", sans-serif;
+    padding: 20px;
+}
+
+.movie__seats__types {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin: 0 0 20px;
+}
+
+.movie__seats__types__item {
+    display: flex;
+    align-items: center;
+}
+.movie__seats__types__item:not(:last-child) {
+    margin-right: 50px;
+}
+.movie__seats__types__item p {
+    color: #fff;
+    font-size: 15px;
+    font-style: italic;
+    margin: 0;
+}
+
+.movie__seats__types__item__icon {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+.movie__seats__types__item__icon img {
+    width: 30px;
+    height: auto;
+}
+
+.movie__stage {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
+.movie__stage__seat {
+    width: 30px;
+    height: 30px;
+    background-size: cover;
+    background-image: url(icons/empty_seat.svg);
+}
+
+.stage__full__seat {
+    background-image: url(icons/full_seat.svg) !important;
+}
