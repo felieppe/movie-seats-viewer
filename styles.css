@@ -61,6 +61,10 @@ body {
     background-image: url(icons/full_seat.svg) !important;
 }
 
+.stage__reserved__seat {
+    background-image: url(icons/reserved_seat.svg) !important;
+}
+
 ::-webkit-scrollbar-track
 {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
