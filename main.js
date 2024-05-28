@@ -27,14 +27,10 @@ const api = express()
 const port = 3000;
 
 api.use(express.json())
+api.use((req, res, next) => { req.win = win; next(); })
 
-api.get('/seat/:id', (req, res) => {
-    let id = req.params.id;
-    if (id == null || id == "") { res.status(400).json({success: false, error: { code: 400, message: "Missing ID of seat"}}); return; }
-
-    win.webContents.send('book-seat', id)
-    res.send(`Seat ${id} is booked!`)
-})
+const routes = require('./api/routes')
+api.use('/', routes)
 
 api.listen(port, () => {
     console.log(`API server listening at http://localhost:${port}`)
