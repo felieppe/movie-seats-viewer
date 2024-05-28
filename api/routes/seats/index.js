@@ -28,6 +28,19 @@ router.get('/available', (req, res) => {
     })
 })
 
+router.get('/booked', (req, res) => {
+    // Get status of all the booked seats.
+
+    let win = req.win
+    win.webContents.send('get-booked-seats-status')
+
+    ipcMain.once('data-output', (event, data) => {
+        if (data["type"] == "booked-seats-status-output") {
+            res.status(200).json({success: true, data: data["data"]})
+        }
+    })
+})
+
 router.get('/:id', (req, res) => {
     // Get status of the seat related to the ID provided.
 
