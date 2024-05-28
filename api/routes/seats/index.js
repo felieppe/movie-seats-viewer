@@ -15,6 +15,19 @@ router.get('/', (req, res) => {
     })
 })
 
+router.get('/available', (req, res) => {
+    // Get status of all the available seats.
+
+    let win = req.win
+    win.webContents.send('get-available-seats-status')
+
+    ipcMain.once('data-output', (event, data) => {
+        if (data["type"] == "available-seats-status-output") {
+            res.status(200).json({success: true, data: data["data"]})
+        }
+    })
+})
+
 router.get('/:id', (req, res) => {
     // Get status of the seat related to the ID provided.
 
