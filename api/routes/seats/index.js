@@ -2,6 +2,19 @@ const express = require('express')
 const router = express.Router()
 const { ipcMain } = require('electron')
 
+router.get('/', (req, res) => {
+    // Get status of all the seats.
+
+    let win = req.win
+    win.webContents.send('get-all-seats-status')
+
+    ipcMain.once('data-output', (event, data) => {
+        if (data["type"] == "all-seats-status-output") {
+            res.status(200).json({success: true, data: data["data"]})
+        }
+    })
+})
+
 router.get('/:id', (req, res) => {
     // Get status of the seat related to the ID provided.
 
