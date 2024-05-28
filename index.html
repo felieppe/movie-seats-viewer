@@ -137,7 +137,7 @@
         const seats = document.querySelectorAll('.movie__stage__seat');
 
         ipcRenderer.on('get-seat-status', (event, seat) => {
-            const seatElement = document.querySelector(`.movie__stage__seat:nth-child(${seat})`);
+            const seatElement = seats[seat - 1];
 
             if (seatElement.classList.contains('stage__full__seat')) {
                 ipcRenderer.send('data-output', { type: "seat-status-output", data: { id: seat, booked: true }});
@@ -145,7 +145,7 @@
         });
 
         ipcRenderer.on('book-seat', (event, seat) => {
-            const seatElement = document.querySelector(`.movie__stage__seat:nth-child(${seat})`);
+            const seatElement = seats[seat - 1];
 
             if (!seatElement.classList.contains('stage__full__seat')) {
                 seatElement.classList.add('stage__full__seat');
@@ -154,7 +154,7 @@
         });
 
         ipcRenderer.on('release-seat', (event, seat) => {
-            const seatElement = document.querySelector(`.movie__stage__seat:nth-child(${seat})`);
+            const seatElement = seats[seat - 1];
 
             if (seatElement.classList.contains('stage__full__seat')) {
                 seatElement.classList.remove('stage__full__seat');
