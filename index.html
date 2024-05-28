@@ -147,11 +147,10 @@
         ipcRenderer.on('book-seat', (event, seat) => {
             const seatElement = document.querySelector(`.movie__stage__seat:nth-child(${seat})`);
 
-            if (seatElement.classList.contains('stage__full__seat')) {
-                seatElement.classList.remove('stage__full__seat');
-            } else {
+            if (!seatElement.classList.contains('stage__full__seat')) {
                 seatElement.classList.add('stage__full__seat');
-            }
+                ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: true }});
+            } else { ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: false, error: "SEAT_OCCUPIED" }}); }
         });
     </script>
 </body>
