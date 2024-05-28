@@ -134,6 +134,16 @@
     <script>
         const { ipcRenderer } = require('electron');
 
+        const seats = document.querySelectorAll('.movie__stage__seat');
+
+        ipcRenderer.on('get-seat-status', (event, seat) => {
+            const seatElement = document.querySelector(`.movie__stage__seat:nth-child(${seat})`);
+
+            if (seatElement.classList.contains('stage__full__seat')) {
+                ipcRenderer.send('data-output', { type: "seat-status-output", data: { id: seat, booked: true }});
+            } else { ipcRenderer.send('data-output', { type: "seat-status-output", data: { id: seat, booked: false }}); }
+        });
+
         ipcRenderer.on('book-seat', (event, seat) => {
             const seatElement = document.querySelector(`.movie__stage__seat:nth-child(${seat})`);
 
