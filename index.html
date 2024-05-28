@@ -136,6 +136,15 @@
 
         const seats = document.querySelectorAll('.movie__stage__seat');
 
+        ipcRenderer.on('get-all-seats-status', (event) => {
+            var seats_status = []
+            seats.forEach((seat, index) => {
+                seats_status.push({ id: index + 1, booked: seat.classList.contains('stage__full__seat') });
+            });
+
+            ipcRenderer.send('data-output', { type: "all-seats-status-output", data: seats_status });
+        })
+
         ipcRenderer.on('get-seat-status', (event, seat) => {
             const seatElement = seats[seat - 1];
             if (seatElement === undefined) { return ipcRenderer.send('data-output', { type: "seat-status-output", data: { id: seat, booked: false, error: "SEAT_NOT_FOUND" }}); }
