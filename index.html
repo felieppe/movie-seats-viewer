@@ -138,6 +138,7 @@
 
         ipcRenderer.on('get-seat-status', (event, seat) => {
             const seatElement = seats[seat - 1];
+            if (seatElement === undefined) { return ipcRenderer.send('data-output', { type: "seat-status-output", data: { id: seat, booked: false, error: "SEAT_NOT_FOUND" }}); }
 
             if (seatElement.classList.contains('stage__full__seat')) {
                 ipcRenderer.send('data-output', { type: "seat-status-output", data: { id: seat, booked: true }});
@@ -146,6 +147,7 @@
 
         ipcRenderer.on('book-seat', (event, seat) => {
             const seatElement = seats[seat - 1];
+            if (seatElement === undefined) { return ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: false, error: "SEAT_NOT_FOUND" }}); }
 
             if (!seatElement.classList.contains('stage__full__seat')) {
                 seatElement.classList.add('stage__full__seat');
@@ -155,6 +157,7 @@
 
         ipcRenderer.on('release-seat', (event, seat) => {
             const seatElement = seats[seat - 1];
+            if (seatElement === undefined) { return ipcRenderer.send('data-output', { type: "seat-released-output", data: { id: seat, released: false, error: "SEAT_NOT_FOUND" }}); }
 
             if (seatElement.classList.contains('stage__full__seat')) {
                 seatElement.classList.remove('stage__full__seat');
