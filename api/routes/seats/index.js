@@ -53,7 +53,6 @@ router.get('/reserved', (req, res) => {
     win.webContents.send('get-reserved-seats-status')
 
     ipcMain.once('data-output', (event, data) => {
-        console.log(data)
         if (data["type"] == "reserved-seats-status-output") {
             res.status(200).json({success: true, data: data["data"]})
         }
