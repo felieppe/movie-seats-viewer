@@ -202,6 +202,28 @@
                 ipcRenderer.send('data-output', { type: "seat-released-output", data: { id: seat, released: true }});
             } else { ipcRenderer.send('data-output', { type: "seat-released-output", data: { id: seat, released: false, error: "SEAT_NOT_OCCUPIED" }}); }
         })
+
+        ipcRenderer.on('reserve-seat', (event, seat) => {
+            const seatElement = seats[seat - 1];
+            if (seatElement === undefined) { return ipcRenderer.send('data-output', { type: "seat-reserved-output", data: { id: seat, reserved: false, error: "SEAT_NOT_FOUND" }}); }
+
+            if (!seatElement.classList.contains('stage__full__seat')) {
+                seatElement.classList.add('stage__reserved__seat');
+                seatElement.appendChild(document.createElement('div')).classList.add('seat__reserved__timer');
+
+                var timer = 10;
+                var interval = setInterval(() => {
+                    timer--;
+                    seatElement.querySelector('.seat__reserved__timer').innerText = timer;
+                    if (timer === 0) {
+                        clearInterval(interval);
+                        seatElement.classList.remove('stage__reserved__seat');
+                        seatElement.querySelector('.seat__reserved__timer').innerText = '';
+                    }
+                }, 1000);
+                ipcRenderer.send('data-output', { type: "seat-reserved-output", data: { id: seat, reserved: true }});
+            } else { ipcRenderer.send('data-output', { type: "seat-reserved-output", data: { id: seat, reserved: false, error: "SEAT_OCCUPIED" }}); }
+        })
     </script>
 </body>
 </html>
