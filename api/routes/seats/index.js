@@ -46,6 +46,20 @@ router.get('/booked', (req, res) => {
     })
 })
 
+router.get('/reserved', (req, res) => {
+    // Get status of all the reserved seats.
+
+    let win = req.win
+    win.webContents.send('get-reserved-seats-status')
+
+    ipcMain.once('data-output', (event, data) => {
+        console.log(data)
+        if (data["type"] == "reserved-seats-status-output") {
+            res.status(200).json({success: true, data: data["data"]})
+        }
+    })
+})
+
 router.get('/:id', (req, res) => {
     // Get status of the seat related to the ID provided.
 
