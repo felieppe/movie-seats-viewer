@@ -9,6 +9,42 @@
 </head>
 <body>
     <div class="main-container">
+        <div class="header">
+            <div class="header__logo">
+                <!-- <img src="icons/cinema.svg" alt="Logo de UCU Movie"/> -->
+                <p>UCU Movie</p>
+            </div>
+
+            <div class="header__right">
+                <div class="header__right__status">
+                    <p>Estado de API: </p>
+                </div>
+
+                <script>
+                    const axios = require('axios');
+
+                    axios.get('http://localhost:3000/heartbeat')
+                        .then(response => {
+                            const statusElement = document.querySelector('.header__right__status');
+                            if (response.data.success = true) {
+                                statusElement.innerHTML = `<p>Estado de API: <div class="header__right__status__text" style="color: green">Conectado</div></p>`;
+                            } else { statusElement.innerHTML = `<p>Estado de API: Error</p>`; }
+                        })
+                        .catch(error => {
+                            const statusElement = document.querySelector('.header__right__status');
+                            statusElement.innerHTML = `<p>Estado de API: Error</p>`;
+                            console.error(error)
+                        });
+                    // const { ipcRenderer } = require('electron');
+
+                    // ipcRenderer.on('api-status', (event, status) => {
+                    //     const statusElement = document.querySelector('.header__right__status');
+                    //     statusElement.innerHTML = `<p>Estado de API: ${status}</p>`;
+                    // });
+                </script>
+            </div>
+        </div>
+
         <div class="movie__container">
             <div class="movie__seats__types">
                 <div class="movie__seats__types__item">

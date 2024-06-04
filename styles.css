@@ -13,6 +13,25 @@ body {
     padding: 20px;
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #5d5d5d;
+    color: white;
+}
+
+.header__right__status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.header__right__status__text {
+    margin-left: 10px;
+}
+
+
 .movie__seats__types {
     display: flex;
     width: 100%;
