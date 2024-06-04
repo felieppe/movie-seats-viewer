@@ -30,10 +30,10 @@ App for visualize seats while other system is booking and releasing the seats!
 
 > *Try to book the rest seat related to the ID provided.*
 > 
-`http://localhost:3000/seats/:id`
+`http://localhost:3000/seats/book/:id`
 
 ## DELETE
 
 > *Try to release the seat related to the ID provided.*
 > 
-`http://localhost:3000/seats/:id`
+`http://localhost:3000/seats/release/:id`
