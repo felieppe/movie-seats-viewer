@@ -104,6 +104,34 @@ body {
     background-image: url(icons/reserved_seat.svg) !important;
 }
 
+.movie__logs {
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.movie__logs__title h1 {
+    color: white;
+    font-size: 20px;
+    margin: 0;
+    font-style: italic;
+    font-weight: 100;
+}
+
+.movie__logs__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    color: white;
+    background-color: rgb(57, 57, 57);
+    margin: 0 20%;
+    border-radius: 10px;
+    max-height: 600px;
+    overflow: hidden;
+}
+
 ::-webkit-scrollbar-track
 {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
