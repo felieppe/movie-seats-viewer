@@ -28,9 +28,13 @@ App for visualize seats while other system is booking and releasing the seats!
 
 ## POST
 
-> *Try to book the rest seat related to the ID provided.*
+> *Try to book the seat related to the ID provided.*
 > 
 `http://localhost:3000/seats/book/:id`
+
+> *Try to reserve the seat related to the ID provided.*
+>
+`http://localhost:3000/seats/reserve/:id`
 
 ## DELETE
 
