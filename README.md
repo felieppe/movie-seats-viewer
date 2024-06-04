@@ -3,8 +3,10 @@
 App for visualize seats while other system is booking and releasing the seats!
 
 # Setup
-1. First of all, install all dependencies with `npm i`
-2. Then, run `npm start`
+1. First of all, install all dependencies. <br />
+`npm i`
+2. Then, start the Electron.js app. <br />
+`npm start`
 
 # Endpoints
 
