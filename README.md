@@ -24,6 +24,10 @@ App for visualize seats while other system is booking and releasing the seats!
 > 
 `http://localhost:3000/seats/booked`
 
+> *Get status of all the reserved seats.*
+> 
+`http://localhost:3000/seats/reserved`
+
 > *Get status of the seat related to the ID provided.*
 > 
 `http://localhost:3000/seats/:id`
