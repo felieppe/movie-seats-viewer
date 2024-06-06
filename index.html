@@ -242,15 +242,27 @@
             } else { ipcRenderer.send('data-output', { type: "seat-status-output", data: { id: seat, booked: false }}); }
         });
 
-        ipcRenderer.on('book-seat', (event, seat) => {
+        ipcRenderer.on('book-seat', (event, seat, client) => {
             const seatElement = seats[seat - 1];
             if (seatElement === undefined) { return ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: false, error: "SEAT_NOT_FOUND" }}); }
 
-            if (!seatElement.classList.contains('stage__full__seat') && !seatElement.classList.contains('stage__reserved__seat')) {
-                seatElement.classList.add('stage__full__seat');
-                ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: true }});
+            if (!seatElement.classList.contains('stage__full__seat')) {
+                if (seatElement.classList.contains('stage__reserved__seat') && seatElement.getAttribute('client') !== client){
+                    seatElement.classList.remove('stage__reserved__seat');
+                    seatElement.querySelector('.seat__reserved__timer').innerText = '';
+                
+                    seatElement.classList.add('stage__full__seat');
+                    seatElement.setAttribute('client', client);
+                    ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: true }});
 
-                log(`Asiento ${seat} ha sido adquirido.`)
+                    log(`Asiento ${seat} ha sido adquirido.`)
+                } else {
+                    seatElement.classList.add('stage__full__seat');
+                    seatElement.setAttribute('client', client);
+                    ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: true }});
+
+                    log(`Asiento ${seat} ha sido adquirido.`)
+                }
             } else { ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: false, error: "SEAT_OCCUPIED" }}); }
         });
 
@@ -266,19 +278,20 @@
             } else { ipcRenderer.send('data-output', { type: "seat-released-output", data: { id: seat, released: false, error: "SEAT_NOT_OCCUPIED" }}); }
         })
 
-        ipcRenderer.on('reserve-seat', (event, seat) => {
+        ipcRenderer.on('reserve-seat', (event, seat, client) => {
             const seatElement = seats[seat - 1];
             if (seatElement === undefined) { return ipcRenderer.send('data-output', { type: "seat-reserved-output", data: { id: seat, reserved: false, error: "SEAT_NOT_FOUND" }}); }
 
             if (!seatElement.classList.contains('stage__full__seat')) {
                 seatElement.classList.add('stage__reserved__seat');
+                seatElement.setAttribute('client', client);
                 seatElement.appendChild(document.createElement('div')).classList.add('seat__reserved__timer');
 
                 var timer = 10;
                 var interval = setInterval(() => {
                     timer--;
                     seatElement.querySelector('.seat__reserved__timer').innerText = timer;
-                    if (timer === 0) {
+                    if (timer === 0 || seatElement.querySelector('.seat__reserved__timer').classList.contains('stage__full__seat')) {
                         clearInterval(interval);
                         seatElement.classList.remove('stage__reserved__seat');
                         seatElement.querySelector('.seat__reserved__timer').innerText = '';
