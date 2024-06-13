@@ -172,6 +172,14 @@
                 </table>
             </div>
 
+            <div class="movie__count">
+                <p id="seats_percentage"></p>
+
+                <script>
+                    document.querySelector('#seats_percentage').innerText = `${document.querySelectorAll('.stage__full__seat').length}/${document.querySelectorAll('.movie__stage__seat').length} (${((document.querySelectorAll('.stage__full__seat').length * 100) / document.querySelectorAll('.movie__stage__seat').length).toFixed(2)}%)`;
+                </script>
+            </div>
+
             <div class="movie__logs">
                 <div class="movie__logs__title">
                     <h1>Logs</h1>
@@ -263,6 +271,8 @@
 
                     log(`Asiento ${seat} ha sido adquirido.`)
                 }
+
+                document.querySelector('#seats_percentage').innerText = `${document.querySelectorAll('.stage__full__seat').length}/${document.querySelectorAll('.movie__stage__seat').length} (${((document.querySelectorAll('.stage__full__seat').length * 100) / document.querySelectorAll('.movie__stage__seat').length).toFixed(2)}%)`;
             } else { ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: false, error: "SEAT_OCCUPIED" }}); }
         });
 

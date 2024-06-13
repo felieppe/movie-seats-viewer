@@ -161,3 +161,11 @@ body {
     font-size: 20px;
     font-weight: bold;
 }
+
+.movie__count {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    opacity: 0.4;
+}
