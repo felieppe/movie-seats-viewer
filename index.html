@@ -9,6 +9,42 @@
 </head>
 <body>
     <div class="main-container">
+        <div class="header">
+            <div class="header__logo">
+                <!-- <img src="icons/cinema.svg" alt="Logo de UCU Movie"/> -->
+                <p>UCU Movie</p>
+            </div>
+
+            <div class="header__nav">
+                <ul>
+                    <li><a href="index.html">INICIO</a></li>
+                </ul>
+            </div>
+
+            <div class="header__right">
+                <div class="header__right__status">
+                    <p>Estado de API: </p>
+                </div>
+
+                <script>
+                    const axios = require('axios');
+
+                    axios.get('http://localhost:3000/heartbeat')
+                        .then(response => {
+                            const statusElement = document.querySelector('.header__right__status');
+                            if (response.data.success = true) {
+                                statusElement.innerHTML = `<p>Estado de API: <div class="header__right__status__text" style="color: green">Conectado</div></p>`;
+                            } else { statusElement.innerHTML = `<p>Estado de API: Error</p>`; }
+                        })
+                        .catch(error => {
+                            const statusElement = document.querySelector('.header__right__status');
+                            statusElement.innerHTML = `<p>Estado de API: Error</p>`;
+                            console.error(error)
+                        });
+                </script>
+            </div>
+        </div>
+
         <div class="movie__container">
             <div class="movie__seats__types">
                 <div class="movie__seats__types__item">
@@ -135,13 +171,25 @@
                     </tr>
                 </table>
             </div>
+
+            <div class="movie__logs">
+                <div class="movie__logs__title">
+                    <h1>Logs</h1>
+                </div>
+
+                <div class="movie__logs__content">
+            </div>
         </div>
     </div>
 
     <script>
-        const { ipcRenderer } = require('electron');
-
+        const { ipcRenderer } = require('electron')
         const seats = document.querySelectorAll('.movie__stage__seat');
+
+        function log(log) {
+            const logsElement = document.querySelector('.movie__logs__content');
+            logsElement.innerHTML += `<div class="movie__logs__content__item">[${new Date(Date.now()).toISOString()}] - ${log}</div>`;
+        }
 
         ipcRenderer.on('get-all-seats-status', (event) => {
             var seats_status = []
@@ -174,6 +222,17 @@
             ipcRenderer.send('data-output', { type: "booked-seats-status-output", data: seats_status });
         })
 
+        ipcRenderer.on('get-reserved-seats-status', (event) => {
+            var seats_status = []
+            seats.forEach((seat, index) => {
+                if (seat.classList.contains('stage__reserved__seat')) {
+                    seats_status.push({ id: index + 1, booked: true });
+                }
+            });
+
+            ipcRenderer.send('data-output', { type: "reserved-seats-status-output", data: seats_status });
+        })
+
         ipcRenderer.on('get-seat-status', (event, seat) => {
             const seatElement = seats[seat - 1];
             if (seatElement === undefined) { return ipcRenderer.send('data-output', { type: "seat-status-output", data: { id: seat, booked: false, error: "SEAT_NOT_FOUND" }}); }
@@ -183,13 +242,27 @@
             } else { ipcRenderer.send('data-output', { type: "seat-status-output", data: { id: seat, booked: false }}); }
         });
 
-        ipcRenderer.on('book-seat', (event, seat) => {
+        ipcRenderer.on('book-seat', (event, seat, client) => {
             const seatElement = seats[seat - 1];
             if (seatElement === undefined) { return ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: false, error: "SEAT_NOT_FOUND" }}); }
 
             if (!seatElement.classList.contains('stage__full__seat')) {
-                seatElement.classList.add('stage__full__seat');
-                ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: true }});
+                if (seatElement.classList.contains('stage__reserved__seat') && seatElement.getAttribute('client') !== client){
+                    seatElement.classList.remove('stage__reserved__seat');
+                    seatElement.querySelector('.seat__reserved__timer').innerText = '';
+                
+                    seatElement.classList.add('stage__full__seat');
+                    seatElement.setAttribute('client', client);
+                    ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: true }});
+
+                    log(`Asiento ${seat} ha sido adquirido.`)
+                } else {
+                    seatElement.classList.add('stage__full__seat');
+                    seatElement.setAttribute('client', client);
+                    ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: true }});
+
+                    log(`Asiento ${seat} ha sido adquirido.`)
+                }
             } else { ipcRenderer.send('data-output', { type: "seat-booked-output", data: { id: seat, booked: false, error: "SEAT_OCCUPIED" }}); }
         });
 
@@ -197,10 +270,37 @@
             const seatElement = seats[seat - 1];
             if (seatElement === undefined) { return ipcRenderer.send('data-output', { type: "seat-released-output", data: { id: seat, released: false, error: "SEAT_NOT_FOUND" }}); }
 
-            if (seatElement.classList.contains('stage__full__seat')) {
+            if (seatElement.classList.contains('stage__full__seat') && !seatElement.classList.contains('stage__reserved__seat')) {
                 seatElement.classList.remove('stage__full__seat');
                 ipcRenderer.send('data-output', { type: "seat-released-output", data: { id: seat, released: true }});
+            
+                log(`Asiento ${seat} ha sido liberado.`)
             } else { ipcRenderer.send('data-output', { type: "seat-released-output", data: { id: seat, released: false, error: "SEAT_NOT_OCCUPIED" }}); }
+        })
+
+        ipcRenderer.on('reserve-seat', (event, seat, client) => {
+            const seatElement = seats[seat - 1];
+            if (seatElement === undefined) { return ipcRenderer.send('data-output', { type: "seat-reserved-output", data: { id: seat, reserved: false, error: "SEAT_NOT_FOUND" }}); }
+
+            if (!seatElement.classList.contains('stage__full__seat')) {
+                seatElement.classList.add('stage__reserved__seat');
+                seatElement.setAttribute('client', client);
+                seatElement.appendChild(document.createElement('div')).classList.add('seat__reserved__timer');
+
+                var timer = 10;
+                var interval = setInterval(() => {
+                    timer--;
+                    seatElement.querySelector('.seat__reserved__timer').innerText = timer;
+                    if (timer === 0 || seatElement.querySelector('.seat__reserved__timer').classList.contains('stage__full__seat')) {
+                        clearInterval(interval);
+                        seatElement.classList.remove('stage__reserved__seat');
+                        seatElement.querySelector('.seat__reserved__timer').innerText = '';
+                    }
+                }, 1000);
+                ipcRenderer.send('data-output', { type: "seat-reserved-output", data: { id: seat, reserved: true }});
+
+                log(`Asiento ${seat} ha sido reservado.`)
+            } else { ipcRenderer.send('data-output', { type: "seat-reserved-output", data: { id: seat, reserved: false, error: "SEAT_OCCUPIED" }}); }
         })
     </script>
 </body>

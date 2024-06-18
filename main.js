@@ -33,6 +33,7 @@ const api = express()
 const port = 3000;
 
 api.use(express.json())
+api.use(express.urlencoded({ extended: true }))
 api.use((req, res, next) => { req.win = win; next(); })
 
 const routes = require('./api/routes')
